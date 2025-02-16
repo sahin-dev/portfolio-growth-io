@@ -1,0 +1,30 @@
+name: Auto Merge Feature Branches to Master
+
+on:
+  push:
+    branches:
+      - salab
+      - sohrab
+      - sahin
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout master branch
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge branch into master
+        run: |
+          git checkout master
+          git merge --no-ff origin/${{ github.ref_name }} -m "Merged ${{ github.ref_name }} into master"
+          git push origin master
