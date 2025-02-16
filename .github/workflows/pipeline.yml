@@ -1,4 +1,4 @@
-name: Auto Merge Feature Branches to Master
+name: Auto Merge Feature Branches to Master (After Tests)
 
 on:
   push:
@@ -8,7 +8,28 @@ on:
       - sahin
 
 jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18 # Change to match your project
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test # Change this if you're using Jest, Mocha, etc.
+
   merge:
+    name: Merge to Master
+    needs: test # Ensures merging happens only if tests pass
     runs-on: ubuntu-latest
 
     steps:
@@ -26,5 +47,5 @@ jobs:
       - name: Merge branch into master
         run: |
           git checkout master
-          git merge --no-ff origin/${{ github.ref_name }} -m "Merged ${{ github.ref_name }} into master"
+          git merge --no-ff origin/${{ github.ref_name }} -m "Merged ${{ github.ref_name }} into master after tests passed"
           git push origin master
