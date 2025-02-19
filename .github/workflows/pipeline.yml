@@ -29,9 +29,8 @@ jobs:
 
   merge:
     name: Merge to Master
-    needs: test # Ensures merging happens only if tests pass
+    needs: test
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v4
@@ -39,13 +38,21 @@ jobs:
           ref: master
           fetch-depth: 0
 
+      - name: Fetch latest changes from feature branch
+        run: |
+          git fetch origin ${{ github.ref_name }}
+          git checkout ${{ github.ref_name }}
+
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Merge branch into master
+      - name: Merge feature branch into master
         run: |
           git checkout master
-          git merge --no-ff origin/${{ github.ref_name }} -m "Merged ${{ github.ref_name }} into master after tests passed"
-          git push origin master
+          git merge --no-ff origin/${GITHUB_REF#refs/heads/} -m "Merged ${GITHUB_REF#refs/heads/} into master after tests passed"
+
+      - name: Push changes to master
+        run: |
+          git push https://${{ secrets.GH_PAT }}@github.com/your-username/your-repo.git master

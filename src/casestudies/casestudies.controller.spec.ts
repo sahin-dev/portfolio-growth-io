@@ -1,18 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-// import { CasestudiesController } from './casestudies.controller';
-// import { CasestudiesService } from './casestudies.service';
 import * as request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {CaseStudies} from "../entities/Casestudies.entity";
-import {CasestudiesModule} from "./casestudies.module";
+import { CaseStudies } from '../entities/casestudies.entity';
+import { CasestudiesModule } from './casestudies.module';
 import { INestApplication } from '@nestjs/common';
-
-
-// test case steps
-
-// 1 : describe to group the test cases
 
 describe('CaseStudiesController (e2e)', () => {
   let app: INestApplication;
@@ -23,9 +16,9 @@ describe('CaseStudiesController (e2e)', () => {
       imports: [
         TypeOrmModule.forRoot({
           type: 'sqlite',
-          database: ':memory:',
+          database: ':memory:',  // In-memory DB for tests
           entities: [CaseStudies],
-          synchronize: true, // Auto-sync schema for testing
+          synchronize: true,  // Automatically sync DB schema
         }),
         CasestudiesModule,
       ],
@@ -38,14 +31,15 @@ describe('CaseStudiesController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    await app.close(); // Close the app server
+    await repository.manager.connection.close(); // Close the database connection
   });
 
   beforeEach(async () => {
     await repository.clear(); // Clean database before each test
   });
 
-  it('should create a new case study (POST/casestudies)', async () => {
+  it('should create a new case study (POST /casestudies)', async () => {
     const newCaseStudy = {
       title: 'AI in Healthcare',
       field: 'Artificial Intelligence',
@@ -56,17 +50,18 @@ describe('CaseStudiesController (e2e)', () => {
     const response = await request(app.getHttpServer())
       .post('/casestudies')
       .send(newCaseStudy)
-      .expect(201);
+      .expect(201); // Expect 201 Created
 
-    expect(response.body).toMatchObject(newCaseStudy);
+    expect(response.body).toMatchObject(newCaseStudy); // Check if response matches sent data
   });
 
-  it('should fail to create a case study with missing fields', async () => {
+  it('should fail to create a case study with missing fields (POST /casestudies)', async () => {
     const response = await request(app.getHttpServer())
       .post('/casestudies')
-      .send({ title: '', field: '',time:'',date:'' }) // Missing required fields
-      .expect(400);
+      .send({ title: '', field: '', time: '', date: '' })  // Missing required fields
+      .expect(400);  // Expect 400 Bad Request
 
+    // Ensure validation messages are present for missing fields
     expect(response.body.message).toContain('title should not be empty');
     expect(response.body.message).toContain('field should not be empty');
     expect(response.body.message).toContain('time should not be empty');
@@ -74,19 +69,21 @@ describe('CaseStudiesController (e2e)', () => {
   });
 
   // it('should get all case studies (GET /casestudies)', async () => {
+  //   // Create two sample case studies before calling GET endpoint
   //   await repository.save([
-  //     { title: 'AI', field: 'Tech', time: '10:00:00', date: '2024-02-19' },
-  //     { title: 'Blockchain', field: 'Finance', time: '11:00:00', date: '2024-02-20' },
+  //     { title: 'AI in Healthcare', field: 'AI', time: '10:00:00', date: '2024-02-19' },
+  //     { title: 'Blockchain in Finance', field: 'Finance', time: '11:00:00', date: '2024-02-20' },
   //   ]);
 
   //   const response = await request(app.getHttpServer())
   //     .get('/casestudies')
-  //     .expect(200);
+  //     .expect(200);  // Expect 200 OK
 
-  //     expect(response.body.length).toBeGreaterThan(0);
-  //     expect(response.body[0]).toHaveProperty('title');
-  //     expect(response.body[0]).toHaveProperty('field');
-  //     expect(response.body[0]).toHaveProperty('time');
-  //     expect(response.body[0]).toHaveProperty('date');
+  //   // Ensure we receive an array of case studies
+  //   expect(response.body.length).toBeGreaterThan(0);
+  //   expect(response.body[0]).toHaveProperty('title');
+  //   expect(response.body[0]).toHaveProperty('field');
+  //   expect(response.body[0]).toHaveProperty('time');
+  //   expect(response.body[0]).toHaveProperty('date');
   // });
 });
