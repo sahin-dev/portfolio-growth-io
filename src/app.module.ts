@@ -29,6 +29,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service'; // Import AppService
+import { CasestudiesModule } from './casestudies/casestudies.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { AppService } from './app.service'; // Import AppService
       autoLoadEntities: true,
       synchronize: true,
     }),
+    CasestudiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
