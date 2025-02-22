@@ -18,17 +18,17 @@ export class CasestudiesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.casestudiesService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.casestudiesService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCasestudyDto: UpdateCasestudyDto) {
-    return this.casestudiesService.update(+id, updateCasestudyDto);
+  update(@Param('id') id: number, @Body() updateCasestudyDto: UpdateCasestudyDto) {
+    return this.casestudiesService.update(id, updateCasestudyDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.casestudiesService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.casestudiesService.remove(id);
   }
 }
