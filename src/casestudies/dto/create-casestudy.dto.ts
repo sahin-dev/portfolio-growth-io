@@ -14,4 +14,24 @@ export class CreateCaseStudyDto {
 
   @IsDateString()
   date: string;
+
+  @IsString()
+  @IsNotEmpty()
+  introduction: string;
+
+  @IsString()
+  @IsNotEmpty()
+  challenge: string;
+
+  @IsString()
+  @IsNotEmpty()
+  solution: string;
+
+  @IsString()
+  @IsNotEmpty()
+  result: string;
+
+  @IsString()
+  @IsNotEmpty()
+  conclusion: string;
 }

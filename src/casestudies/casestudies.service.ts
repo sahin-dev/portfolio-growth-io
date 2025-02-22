@@ -18,19 +18,44 @@ export class CasestudiesService {
     return this.casestudyrepository.save(casestudy);
   }
 
-  findAll() {
-    return `This action returns all casestudies`;
+  async findAll(): Promise<CaseStudies[]> {
+    return await this.casestudyrepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} casestudy`;
+  async findOne(id: number): Promise<CaseStudies> {
+    const casestudy = await this.casestudyrepository.findOne({ where: { id } });
+    if (!casestudy) {
+      throw new Error(`CaseStudy with id ${id} not found`);
+    }
+    return casestudy;
   }
 
-  update(id: number, updateCasestudyDto: UpdateCasestudyDto) {
-    return `This action updates a #${id} casestudy`;
+  async update(
+    id: number,
+    updateCaseStudyDto: UpdateCasestudyDto,
+  ): Promise<CaseStudies> {
+    const casestudyForUpdate = await this.casestudyrepository.findOne({
+      where: { id },
+    });
+    if (!casestudyForUpdate) {
+      throw new Error(`CaseStudy with id ${id} not found`);
+    }
+    await this.casestudyrepository.update(id, updateCaseStudyDto);
+    const casestudy = await this.casestudyrepository.findOne({ where: { id } });
+    if (!casestudy) {
+      throw new Error(`CaseStudy with id ${id} not found`);
+    }
+    return casestudy;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} casestudy`;
+  async remove(id: number): Promise<void> {
+    const casestudy = await this.casestudyrepository.findOne({
+      where: { id },
+    });
+    if (!casestudy) {
+      throw new Error(`CaseStudy with id ${id} not found`);
+    }
+    await this.casestudyrepository.delete(id);
+    
   }
 }

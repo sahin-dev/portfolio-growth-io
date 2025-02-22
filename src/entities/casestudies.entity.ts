@@ -16,4 +16,20 @@ export class CaseStudies {
 
   @Column({ type: 'date' })
   date: string;
+
+  // introduction
+  @Column()
+  introduction: string;
+  // Challenge
+  @Column()
+  challenge: string;
+  // solution
+  @Column()
+  solution: string;
+  // result
+  @Column()
+  result: string;
+  // conclusion
+  @Column()
+  conclusion: string;
 }
